@@ -62,18 +62,15 @@ chao9.y = display.contentCenterY-249
 chao9.rotation = 90
 
 
-
 local armadilha01 = display.newImageRect ("armadilha1.png", 20, 20)
 armadilha01.x = display.contentCenterX
 armadilha01.y = display.contentCenterY+115
+armadilha01.myName = "armadilha01"
 
 local armadilha02 = display.newImageRect ("armadilha2.png", 25, 25 )
 armadilha02.x = display.contentCenterX-90
 armadilha02.y = display.contentCenterY-33
-
-audio.stop( 1 )
-
-local gameSound
+armadilha02.myName = "armadilha02"
 
 --===============================================================
 local physics =  require ("physics")
@@ -114,14 +111,24 @@ buttons[3].y = 240
 buttons[3].myName = "pular"
 
 
-local sheetOptions = {
+--[[local sheetOptions = {
 	width = 23,
 	height = 27,
 	numFrames = 34,
 	sheetContentWidth = 782,
 	sheetContentHeigth = 27
 }
-local sheet = graphics.newImageSheet( "spriteSheets.png", sheetOptions)
+--]]
+local sheetOptions = {
+	width = 33,
+	height = 39,
+	numFrames = 34,
+	sheetContentWidth = 1122,
+	sheetContentHeigth = 39
+}
+
+
+local sheet = graphics.newImageSheet( "spriteSheets2.png", sheetOptions)
 
 local sequenceSprite = {
 	{name = "paradoDireita", frames = {11}, time = 500, loopCount = 0},
@@ -135,7 +142,7 @@ local sequenceSprite = {
 local player = display.newSprite( sheet, sequenceSprite)
 player.x = display.contentCenterX-100
 player.y = display.contentCenterY+200
-
+player.myName = "player"
 
 physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
@@ -180,6 +187,27 @@ local touchFunction = function(e)
 	end
 end
 
+--====================================================================
+local function onCollision( event )
+ 
+    if ( event.phase == "began" ) then
+ 
+        local obj1 = event.object1
+        local obj2 = event.object2
+
+        if ( obj1.myName == "player" and obj2.myName == "armadilha01" ) then
+        	display.remove( obj1 )
+        elseif
+            ( obj1.myName == "armadilha01" and obj2.myName == "player" ) then       	
+        	display.remove( obj2 )
+        end
+
+
+    end
+end
+
+
+
 
 local j
 
@@ -188,11 +216,10 @@ for j = 1, #buttons do
 
 end
 
---adicionando audio
-    gameSound = audio.loadStream("audio/audioGame.mp3")
-    audio.reserveChannels( 2 )
-    audio.play( menuSound, {chanel = 2, loops = -1})
---fim audio
+Runtime:addEventListener( "collision", onCollision )
+
+
+
 
 return scene
 ---------

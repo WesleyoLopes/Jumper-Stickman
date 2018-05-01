@@ -5,8 +5,21 @@ local scene = composer.newScene( )
 local menuSound
 
 local function iniciarJogo()
+    audio.setVolume(0 , {chanel =1})
 	composer.removeScene( "game" )
 	composer.gotoScene("game", { time=800, effect="crossFade" } )
+end
+
+
+local function exitGame()
+    timer.performWithDelay( 1000,
+    function()
+      if( system.getInfo("platformName")=="Android" ) then
+        native.requestExit()
+      else
+        os.exit()
+      end
+end )
 end
 
 
@@ -34,10 +47,12 @@ function scene:create(event)
     sair.y = display.contentCenterY +240
 
     jogar:addEventListener( "tap", iniciarJogo)
+    sair:addEventListener("tap", exitGame)
 
 --adicionando audio
     menuSound = audio.loadStream("audio/audioMenu.mp3")
     audio.reserveChannels( 1 )
+    audio.setVolume( 0.4 , {chanel = 1} )
     audio.play( menuSound, {chanel = 1, loops = -1})
 --fim audio
 end
