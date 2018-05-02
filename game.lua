@@ -62,6 +62,7 @@ chao9.y = display.contentCenterY-249
 chao9.rotation = 90
 
 
+
 local armadilha01 = display.newImageRect ("armadilha1.png", 20, 20)
 armadilha01.x = display.contentCenterX
 armadilha01.y = display.contentCenterY+115
@@ -110,16 +111,7 @@ buttons[3].x = 160
 buttons[3].y = 240
 buttons[3].myName = "pular"
 
-
---[[local sheetOptions = {
-	width = 23,
-	height = 27,
-	numFrames = 34,
-	sheetContentWidth = 782,
-	sheetContentHeigth = 27
-}
---]]
-local sheetOptions = {
+local sheetOptions1 = {
 	width = 33,
 	height = 39,
 	numFrames = 34,
@@ -127,8 +119,7 @@ local sheetOptions = {
 	sheetContentHeigth = 39
 }
 
-
-local sheet = graphics.newImageSheet( "spriteSheets2.png", sheetOptions)
+local sheet = graphics.newImageSheet( "spriteSheets2.png", sheetOptions1)
 
 local sequenceSprite = {
 	{name = "paradoDireita", frames = {11}, time = 500, loopCount = 0},
@@ -138,6 +129,26 @@ local sequenceSprite = {
 	{name = "pulandoEsquerda", frames = {27,28,29,30,27}, time = 1000, loopCount = 1},
 
 }
+
+--[[
+--=====================================
+
+local sheetOptions2 = {
+	whidt = 33,
+	height = 39,
+	numFrames = 22,
+	sheetContentWidth = 732,
+	sheetContentHeigth = 39
+}
+
+local sheet2 = graphics.newImageSheet( "spriteCaindo.png", sheetOptions2)
+
+local sequenceSprite = {
+	{name = "caindoEsquerda", frames = {1,2,3,4,5,5,5,6,7,8,9,10,11}, time = 500, loopCount = 0},
+	{name - "caindoDireita", frames = {12,13,14,15,16,17,18,19,20,21,22}, time = 500, loopCount = 0},
+}
+--]]
+
 
 local player = display.newSprite( sheet, sequenceSprite)
 player.x = display.contentCenterX-100
@@ -205,8 +216,6 @@ local function onCollision( event )
 
     end
 end
-
-
 
 
 local j
