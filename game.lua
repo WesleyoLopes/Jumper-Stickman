@@ -112,21 +112,23 @@ buttons[3].y = 240
 buttons[3].myName = "pular"
 
 local sheetOptions1 = {
-	width = 33,
-	height = 39,
-	numFrames = 34,
-	sheetContentWidth = 1122,
-	sheetContentHeigth = 39
+	width = 35,
+	height = 41,
+	numFrames = 56,
+	sheetContentWidth = 1960,
+	sheetContentHeigth = 41
 }
 
-local sheet = graphics.newImageSheet( "spriteSheets2.png", sheetOptions1)
+local sheet = graphics.newImageSheet( "spriteCompleta.png", sheetOptions1)
 
 local sequenceSprite = {
-	{name = "paradoDireita", frames = {11}, time = 500, loopCount = 0},
-	{name = "correndoDireita", frames = {2,3,4,5,6,7,8,9,10}, time = 500, loopCount = 0 },
-	{name = "pulandoDireita", frames = {12,13,14,16,16,16,16,16,11}, time = 1000, loopCount = 1 },
-	{name = "correndoEsquerda", frames = {18,20,22,23,24,25,26}, time = 500, loopCount = 0 },
+	{name = "paradoDireita", frames = {1}, time = 500, loopCount = 0},
+	{name = "correndoDireita", frames = {3,4,5,6,7,8,9,10}, time = 500, loopCount = 0 },
+	{name = "pulandoDireita", frames = {12,13,14,16,16,16,11}, time = 1000, loopCount = 1 },
+	{name = "caindoDireita", frames = {46,47,48,49,50}, time = 500, loopCount = 1},
+	{name = "correndoEsquerda", frames = {19,20,22,23,24,25,26}, time = 500, loopCount = 0 },
 	{name = "pulandoEsquerda", frames = {27,28,29,30,27}, time = 1000, loopCount = 1},
+
 
 }
 
@@ -207,10 +209,13 @@ local function onCollision( event )
         local obj2 = event.object2
 
         if ( obj1.myName == "player" and obj2.myName == "armadilha01" ) then
-        	display.remove( obj1 )
+           	player:setSequence( "caindoDireita" )
+           	player:play( )
         elseif
             ( obj1.myName == "armadilha01" and obj2.myName == "player" ) then       	
-        	display.remove( obj2 )
+        	player:setSequence( "caindoDireita" )
+           	player:play( )
+        	--display.remove( obj2 )
         end
 
 
