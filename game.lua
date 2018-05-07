@@ -6,6 +6,8 @@ local background = display.newImageRect("fundo.jpg", 330, 580)
 background.x = display.contentCenterX
 background.y = display.contentCenterY
 
+local vidas = 3
+
 -----------------------------------------------------------
 local paredes = display.newGroup()
 
@@ -62,7 +64,6 @@ chao9.y = display.contentCenterY-249
 chao9.rotation = 90
 
 
-
 local armadilha01 = display.newImageRect ("armadilha1.png", 20, 20)
 armadilha01.x = display.contentCenterX
 armadilha01.y = display.contentCenterY+115
@@ -72,6 +73,9 @@ local armadilha02 = display.newImageRect ("armadilha2.png", 25, 25 )
 armadilha02.x = display.contentCenterX-90
 armadilha02.y = display.contentCenterY-33
 armadilha02.myName = "armadilha02"
+
+local livesText = display.newText( "Vidas: " .. vidas, 60, 0, native.systemFont, 20 )
+livesText:setFillColor( 0 )
 
 --===============================================================
 local physics =  require ("physics")
@@ -111,7 +115,36 @@ buttons[3].x = 160
 buttons[3].y = 240
 buttons[3].myName = "pular"
 
-local sheetOptions1 = {
+
+
+local borracha = {}
+
+	borracha[1] = display.newImageRect( "borracha.png", 50, 35)
+	borracha[1].x = 100
+	borracha[1].y = 400
+	
+	borracha[2] = display.newImageRect( "borracha.png", 50, 35)
+	borracha[2].x = 150
+	borracha[2].y = 400
+
+	borracha[3] = display.newImageRect( "borracha.png", 50, 35)
+	borracha[3].x = 250
+	borracha[3].y = 400
+
+	borracha[4] = display.newImageRect( "borracha.png", 50, 35)
+	borracha[4].x = 150
+	borracha[4].y = 300
+
+	borracha[5] = display.newImageRect( "borracha.png", 50, 35)
+	borracha[5].x = 150
+	borracha[5].y = 180
+
+	borracha[6] = display.newImageRect( "borracha.png", 50, 35)
+	borracha[6].x = 85
+	borracha[6].y = 100
+
+
+local sheetOptions = {
 	width = 35,
 	height = 41,
 	numFrames = 56,
@@ -119,37 +152,20 @@ local sheetOptions1 = {
 	sheetContentHeigth = 41
 }
 
-local sheet = graphics.newImageSheet( "spriteCompleta.png", sheetOptions1)
+local sheet = graphics.newImageSheet( "spriteCompleta.png", sheetOptions)
 
 local sequenceSprite = {
 	{name = "paradoDireita", frames = {1}, time = 500, loopCount = 0},
 	{name = "correndoDireita", frames = {3,4,5,6,7,8,9,10}, time = 500, loopCount = 0 },
-	{name = "pulandoDireita", frames = {12,13,14,16,16,16,11}, time = 1000, loopCount = 1 },
-	{name = "caindoDireita", frames = {46,47,48,49,50}, time = 500, loopCount = 1},
+	{name = "pulandoDireita", frames = {12,13,14,16,16,16,12}, time = 1000, loopCount = 1 },
+	{name = "caindoDireita", frames = {46,47,48,49,50,50,50,51,52,52,53,53,54,54,55,55,56,56}, time = 1000, loopCount = 1},
 	{name = "correndoEsquerda", frames = {19,20,22,23,24,25,26}, time = 500, loopCount = 0 },
-	{name = "pulandoEsquerda", frames = {27,28,29,30,27}, time = 1000, loopCount = 1},
+	{name = "pulandoEsquerda", frames = {27,28,29,30,28}, time = 1000, loopCount = 1},
+	{name = "caindoEsquerda", frames = {36,37,38,39,39,39,39,40,40,41,41,42,42,43,43,44,44,45,45}, time = 1000, loopCount = 1},
 
 
 }
 
---[[
---=====================================
-
-local sheetOptions2 = {
-	whidt = 33,
-	height = 39,
-	numFrames = 22,
-	sheetContentWidth = 732,
-	sheetContentHeigth = 39
-}
-
-local sheet2 = graphics.newImageSheet( "spriteCaindo.png", sheetOptions2)
-
-local sequenceSprite = {
-	{name = "caindoEsquerda", frames = {1,2,3,4,5,5,5,6,7,8,9,10,11}, time = 500, loopCount = 0},
-	{name - "caindoDireita", frames = {12,13,14,15,16,17,18,19,20,21,22}, time = 500, loopCount = 0},
-}
---]]
 
 
 local player = display.newSprite( sheet, sequenceSprite)
@@ -160,6 +176,13 @@ player.myName = "player"
 physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
 local directJump
+
+
+local function updateText()
+
+  livesText.text = "Vidas: " .. vidas 
+
+end
 
 local function jump()
   player:applyLinearImpulse( 0, -0.030, player.x, player.y )
@@ -176,10 +199,9 @@ local function jump()
 
 end
 
-local passos = 0
-
-local update = function()
-	player.x = player.x + passos
+local function voltarMenu()
+	composer.removeScene( "menu" )
+	composer.gotoScene("menu", { time=800, effect="crossFade" } )
 end
 
 local touchFunction = function(e)
@@ -208,19 +230,45 @@ local function onCollision( event )
         local obj1 = event.object1
         local obj2 = event.object2
 
-        if ( obj1.myName == "player" and obj2.myName == "armadilha01" ) then
+        if ( obj1.myName == "player" and obj2.myName == "armadilha01" or obj2.myname == "armadilha02" ) then
+           	if (directJump == "direita") then
+           	player:setSequence( "caindoEsquerda" )
+            vidas = vidas-1
+            livesText.text = "Vidas: " .. vidas 
+
+           else
            	player:setSequence( "caindoDireita" )
+           	vidas = vidas-1
+          	livesText.text = "Vidas: " .. vidas 
+
+           	end
            	player:play( )
         elseif
-            ( obj1.myName == "armadilha01" and obj2.myName == "player" ) then       	
-        	player:setSequence( "caindoDireita" )
-           	player:play( )
-        	--display.remove( obj2 )
+            ( obj1.myName == "armadilha01" or obj1.myName == "armadilha02" and obj2.myName == "player" ) then       	
+            if (directJump == "direita") then
+           	player:setSequence( "caindoEsquerda" )
+           	player:play()
+           	vidas = vidas-1
+           	livesText.text = "Vidas: " .. vidas 
+           else
+           	player:setSequence( "caindoDireita" )
+           	player:play()
+           	vidas = vidas-1
+           	livesText.text = "Vidas: " .. vidas 
+           	end
+        if (vidas == 0) then
+        	display.remove( player )
+        	gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
+			gameOver:setFillColor( 1, 0, 0, 1 )
+			gameOver:addEventListener( "tap", voltarMenu  )
+        end
+
         end
 
 
     end
 end
+
 
 
 local j
