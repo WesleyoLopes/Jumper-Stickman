@@ -14,10 +14,12 @@ local paredes = display.newGroup()
 local parede = display.newImageRect (paredes,"parede.png", 10, 570)
 parede.x = display.contentCenterX-155
 parede.y = display.contentCenterY
+parede.myName = "parade1"
 
 local parede2 = display.newImageRect (paredes,"parede.png", 10, 570)
 parede2.x = display.contentCenterX+155
 parede2.y = display.contentCenterY
+parede2.myName = "parede2"
 
 local chao1 = display.newImageRect (paredes, "chao1.png", 350, 20)--chão
 chao1.x = display.contentCenterX
@@ -64,15 +66,12 @@ chao9.y = display.contentCenterY-249
 chao9.rotation = 90
 
 
-local armadilha01 = display.newImageRect ("armadilha1.png", 20, 20)
-armadilha01.x = display.contentCenterX
-armadilha01.y = display.contentCenterY+115
-armadilha01.myName = "armadilha01"
+local borracha01 = display.newImageRect ("borracha.png", 40, 30)
+borracha01.x = display.contentCenterX-100
+borracha01.y = display.contentCenterY+105
+borracha01.myName = "borracha01"
 
-local armadilha02 = display.newImageRect ("armadilha2.png", 25, 25 )
-armadilha02.x = display.contentCenterX-90
-armadilha02.y = display.contentCenterY-33
-armadilha02.myName = "armadilha02"
+
 
 local livesText = display.newText( "Vidas: " .. vidas, 60, 0, native.systemFont, 20 )
 livesText:setFillColor( 0 )
@@ -95,8 +94,9 @@ physics.addBody( chao7, "static",{bounce = 0})
 physics.addBody( chao8, "static",{bounce = 0})
 physics.addBody( chao9, "static" ,{bounce = 0})
 
-physics.addBody( armadilha01, "static",{bounce = 0} )
-physics.addBody( armadilha02, "static",{bounce = 0} )
+physics.addBody( borracha01, "dynamic",{bounce = 0} )
+
+borracha01:setLinearVelocity ( 30, 0 )
 
 local buttons = {}
 
@@ -202,7 +202,8 @@ local function onCollision( event )
         local obj1 = event.object1
         local obj2 = event.object2
 
-        if ( obj1.myName == "player" and obj2.myName == "armadilha01" or obj2.myname == "armadilha02" ) then
+        if ( obj1.myName == "player" and obj2.myName == "borracha01" ) then
+
            	if (directJump == "direita") then
            	player:setSequence( "caindoEsquerda" )
             vidas = vidas-1
@@ -216,9 +217,8 @@ local function onCollision( event )
            	end
            	player:play( )
 
-
         elseif
-            ( obj1.myName == "armadilha01" or obj1.myName == "armadilha02" and obj2.myName == "player" ) then       	
+            ( obj1.myName == "borracha01" and obj2.myName == "player" ) then       	
             if (directJump == "direita") then
            	player:setSequence( "caindoEsquerda" )
            	player:play()
@@ -238,7 +238,6 @@ local function onCollision( event )
         end
 
         end
-
 
     end
 end
