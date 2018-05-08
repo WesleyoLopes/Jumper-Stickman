@@ -116,34 +116,6 @@ buttons[3].y = 240
 buttons[3].myName = "pular"
 
 
-
-local borracha = {}
-
-	borracha[1] = display.newImageRect( "borracha.png", 50, 35)
-	borracha[1].x = 100
-	borracha[1].y = 400
-	
-	borracha[2] = display.newImageRect( "borracha.png", 50, 35)
-	borracha[2].x = 150
-	borracha[2].y = 400
-
-	borracha[3] = display.newImageRect( "borracha.png", 50, 35)
-	borracha[3].x = 250
-	borracha[3].y = 400
-
-	borracha[4] = display.newImageRect( "borracha.png", 50, 35)
-	borracha[4].x = 150
-	borracha[4].y = 300
-
-	borracha[5] = display.newImageRect( "borracha.png", 50, 35)
-	borracha[5].x = 150
-	borracha[5].y = 180
-
-	borracha[6] = display.newImageRect( "borracha.png", 50, 35)
-	borracha[6].x = 85
-	borracha[6].y = 100
-
-
 local sheetOptions = {
 	width = 35,
 	height = 41,
@@ -199,10 +171,6 @@ local function jump()
 
 end
 
-local function voltarMenu()
-	composer.removeScene( "menu" )
-	composer.gotoScene("menu", { time=800, effect="crossFade" } )
-end
 
 local touchFunction = function(e)
 	if e.phase == "began" then
@@ -220,6 +188,10 @@ local touchFunction = function(e)
 			jump()
 		end	
 	end
+end
+
+local function gotoMenu()
+	composer.gotoScene( "menu", { time=800, effect="crossFade" } )
 end
 
 --====================================================================
@@ -243,6 +215,8 @@ local function onCollision( event )
 
            	end
            	player:play( )
+
+
         elseif
             ( obj1.myName == "armadilha01" or obj1.myName == "armadilha02" and obj2.myName == "player" ) then       	
             if (directJump == "direita") then
@@ -260,7 +234,7 @@ local function onCollision( event )
         	display.remove( player )
         	gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
 			gameOver:setFillColor( 1, 0, 0, 1 )
-			gameOver:addEventListener( "tap", voltarMenu  )
+			gameOver:addEventListener( "tap", gotoMenu )
         end
 
         end
