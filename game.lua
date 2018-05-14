@@ -37,6 +37,7 @@ chao3.rotation = 90
 local chao4 = display.newImageRect (paredes, "chao2.png", 150, 150)--bloco direito2
 chao4.x = display.contentCenterX+100
 chao4.y = display.contentCenterY-30
+chao4.myName = "blocoDireito"
 
 local chao5 = display.newImageRect (paredes, "parede.png", 10,200)--chão 3
 chao5.x = display.contentCenterX+10
@@ -50,7 +51,7 @@ chao6.rotation = 90
 
 local chao7 = display.newImageRect (paredes, "parede.png", 10,200)--chão 5
 chao7.x = display.contentCenterX
-chao7.y = display.contentCenterY-105
+chao7.y = display.contentCenterY-99
 chao7.rotation = 90
 
 
@@ -68,8 +69,28 @@ chao9.rotation = 90
 
 local borracha01 = display.newImageRect ("borracha.png", 40, 30)
 borracha01.x = display.contentCenterX-100
-borracha01.y = display.contentCenterY+105
+borracha01.y = display.contentCenterY-200
 borracha01.myName = "borracha01"
+
+---=========================  teste borracha = ======================
+
+local enemiesTable = {}
+
+local function createEnemy()
+    local newEnemy = display.newImageRect("borracha.png", 40,30)
+    physics.addBody( "dynamic", { friction = 0, radius=5, bounce=0.2, isSensor = true } )
+    newEnemy.myName = "borracha02"
+    newEnemy.x = display.contentWidth 
+    newEnemy.y = display.contentHeight
+    newEnemy.isAtirador = false
+    newEnemy:scale(0.5,0.5)
+    newEnemy:play()
+    newEnemy:setLinearVelocity(math.random(-30,-10),0)
+    table.insert( enemiesTable, newEnemy )
+end
+
+--===================================================================
+
 
 
 
@@ -230,6 +251,24 @@ local function onCollision( event )
            	vidas = vidas-1
            	livesText.text = "Vidas: " .. vidas 
            	end
+--======================================colisões com o cenário
+        elseif														--
+        	(obj1.myName == "borracha01" and obj2.myName == "parede2" or obj2.myName == "blocoDireito")	then
+        	borracha01:setLinearVelocity ( -30, 0 )
+        elseif						--
+        	(obj1.myName == "parede2" or obj1.myName == "blocoDireito" and obj2.myName == "borracha01")	then	
+        	borracha01:setLinearVelocity ( -30, 0 )	
+
+
+        elseif
+        	(obj1.myName == "borracha01" and obj2.myName == "parede1" )	then
+        	borracha01:setLinearVelocity ( 30, 0 )
+        elseif
+        	(obj1.myName == "parede1" and obj2.myName == "borracha01")	then	
+        	borracha01:setLinearVelocity ( 30, 0 )	
+
+--==========================================================================================================
+
         if (vidas == 0) then
         	display.remove( player )
         	gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
