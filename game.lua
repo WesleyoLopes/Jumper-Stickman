@@ -67,30 +67,11 @@ chao9.y = display.contentCenterY-249
 chao9.rotation = 90
 
 
-local borracha01 = display.newImageRect ("borracha.png", 40, 30)
+--[[local borracha01 = display.newImageRect ("borracha.png", 40, 30)
 borracha01.x = display.contentCenterX-100
 borracha01.y = display.contentCenterY-200
 borracha01.myName = "borracha01"
-
----=========================  teste borracha = ======================
-
-local enemiesTable = {}
-
-local function createEnemy()
-    local newEnemy = display.newImageRect("borracha.png", 40,30)
-    physics.addBody( "dynamic", { friction = 0, radius=5, bounce=0.2, isSensor = true } )
-    newEnemy.myName = "borracha02"
-    newEnemy.x = display.contentWidth 
-    newEnemy.y = display.contentHeight
-    newEnemy.isAtirador = false
-    newEnemy:scale(0.5,0.5)
-    newEnemy:play()
-    newEnemy:setLinearVelocity(math.random(-30,-10),0)
-    table.insert( enemiesTable, newEnemy )
-end
-
---===================================================================
-
+]]
 
 
 
@@ -115,9 +96,24 @@ physics.addBody( chao7, "static",{bounce = 0})
 physics.addBody( chao8, "static",{bounce = 0})
 physics.addBody( chao9, "static" ,{bounce = 0})
 
-physics.addBody( borracha01, "dynamic",{bounce = 0} )
+local function borracha()
+  local borracha = display.newImageRect("borracha.png", 15, 20 )
+  borracha.x = display.contentCenterX
+  borracha.y = display.contentCenterY-270
+  physics.addBody( borracha, "dynamic",{bounce = 0,5} )
+  borracha:setLinearVelocity(-40,0)
+--  transition.to (borracha, {x = display.contentCenterX, y = display.contentCenterY, timer = 500})
+end
+timer.performWithDelay( 5000, borracha, 100 )
 
-borracha01:setLinearVelocity ( 30, 0 )
+
+
+--physics.addBody( borracha01, "dynamic",{bounce = 0,5} )
+
+--borracha01:setLinearVelocity ( 30, 0 )
+
+
+
 
 local buttons = {}
 
@@ -216,6 +212,7 @@ local function gotoMenu()
 end
 
 --====================================================================
+
 local function onCollision( event )
  
     if ( event.phase == "began" ) then
@@ -223,7 +220,7 @@ local function onCollision( event )
         local obj1 = event.object1
         local obj2 = event.object2
 
-        if ( obj1.myName == "player" and obj2.myName == "borracha01" ) then
+        if ( obj1.myName == "player" and obj2.myName == "borracha" ) then
 
            	if (directJump == "direita") then
            	player:setSequence( "caindoEsquerda" )
@@ -239,7 +236,7 @@ local function onCollision( event )
            	player:play( )
 
         elseif
-            ( obj1.myName == "borracha01" and obj2.myName == "player" ) then       	
+            ( obj1.myName == "borracha" and obj2.myName == "player" ) then       	
             if (directJump == "direita") then
            	player:setSequence( "caindoEsquerda" )
            	player:play()
@@ -251,37 +248,39 @@ local function onCollision( event )
            	vidas = vidas-1
            	livesText.text = "Vidas: " .. vidas 
            	end
+        if (vidas <= 0) then
+          display.remove( player )
+          gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
+          gameOver:setFillColor( 1, 0, 0, 1 )
+          gameOver:addEventListener( "tap", gotoMenu )
+        end    
 --======================================colisões com o cenário
-        elseif														--
-        	(obj1.myName == "borracha01" and obj2.myName == "parede2" or obj2.myName == "blocoDireito")	then
-        	borracha01:setLinearVelocity ( -30, 0 )
-        elseif						--
-        	(obj1.myName == "parede2" or obj1.myName == "blocoDireito" and obj2.myName == "borracha01")	then	
-        	borracha01:setLinearVelocity ( -30, 0 )	
+        elseif						
+        	(obj1.myName == "borracha" and obj2.myName == "blocoDireito")	then
+        	borracha:setLinearVelocity ( -30, 0 )
+        elseif						
+        	(obj1.myName == "blocoDireito" and obj2.myName == "borracha")	then	
+        	borracha:setLinearVelocity ( -30, 0 )	
 
 
         elseif
-        	(obj1.myName == "borracha01" and obj2.myName == "parede1" )	then
-        	borracha01:setLinearVelocity ( 30, 0 )
+        	(obj1.myName == "borracha" and obj2.myName == "parede1" )	then
+        	 borracha01:setLinearVelocity ( 30, 0 )
         elseif
-        	(obj1.myName == "parede1" and obj2.myName == "borracha01")	then	
-        	borracha01:setLinearVelocity ( 30, 0 )	
-
+        	(obj1.myName == "parede1" and obj2.myName == "borracha")	then	
+        	 borracha01:setLinearVelocity ( 30, 0 )	
+        elseif
+          (obj1.myName == "borracha" and obj2.myName == "parede2" ) then
+           borracha01:setLinearVelocity ( -30, 0 )
+        elseif
+          (obj1.myName == "parede2" and obj2.myName == "borracha")  then  
+           borracha01:setLinearVelocity ( -30, 0 ) 
 --==========================================================================================================
-
-        if (vidas == 0) then
-        	display.remove( player )
-        	gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
-			gameOver:setFillColor( 1, 0, 0, 1 )
-			gameOver:addEventListener( "tap", gotoMenu )
-        end
 
         end
 
     end
 end
-
-
 
 local j
 
