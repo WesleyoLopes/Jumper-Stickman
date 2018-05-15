@@ -14,7 +14,7 @@ local paredes = display.newGroup()
 local parede = display.newImageRect (paredes,"parede.png", 10, 570)
 parede.x = display.contentCenterX-155
 parede.y = display.contentCenterY
-parede.myName = "parade1"
+parede.myName = "parede1"
 
 local parede2 = display.newImageRect (paredes,"parede.png", 10, 570)
 parede2.x = display.contentCenterX+155
@@ -96,15 +96,17 @@ physics.addBody( chao7, "static",{bounce = 0})
 physics.addBody( chao8, "static",{bounce = 0})
 physics.addBody( chao9, "static" ,{bounce = 0})
 
+
+
 local function borracha()
   local borracha = display.newImageRect("borracha.png", 15, 20 )
   borracha.x = display.contentCenterX
   borracha.y = display.contentCenterY-270
+  borracha.myName = "borracha"
   physics.addBody( borracha, "dynamic",{bounce = 0,5} )
   borracha:setLinearVelocity(-40,0)
---  transition.to (borracha, {x = display.contentCenterX, y = display.contentCenterY, timer = 500})
 end
-timer.performWithDelay( 5000, borracha, 100 )
+timer.performWithDelay( 5000, borracha, 0 )
 
 
 
@@ -257,24 +259,22 @@ local function onCollision( event )
 --======================================colisões com o cenário
         elseif						
         	(obj1.myName == "borracha" and obj2.myName == "blocoDireito")	then
-        	borracha:setLinearVelocity ( -30, 0 )
+        	 obj1:setLinearVelocity ( -30, 0 )
         elseif						
         	(obj1.myName == "blocoDireito" and obj2.myName == "borracha")	then	
-        	borracha:setLinearVelocity ( -30, 0 )	
-
-
+        	 obj2:setLinearVelocity ( -30, 0 )	
         elseif
         	(obj1.myName == "borracha" and obj2.myName == "parede1" )	then
-        	 borracha01:setLinearVelocity ( 30, 0 )
+        	 obj1:setLinearVelocity ( 30, 0 )
         elseif
         	(obj1.myName == "parede1" and obj2.myName == "borracha")	then	
-        	 borracha01:setLinearVelocity ( 30, 0 )	
+        	 obj2:setLinearVelocity ( 30, 0 )	
         elseif
           (obj1.myName == "borracha" and obj2.myName == "parede2" ) then
-           borracha01:setLinearVelocity ( -30, 0 )
+           obj1:setLinearVelocity ( -30, 0 )
         elseif
           (obj1.myName == "parede2" and obj2.myName == "borracha")  then  
-           borracha01:setLinearVelocity ( -30, 0 ) 
+           obj2:setLinearVelocity ( -30, 0 ) 
 --==========================================================================================================
 
         end
