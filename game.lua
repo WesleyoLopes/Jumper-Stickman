@@ -255,6 +255,7 @@ local function onCollision( event )
           gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
           gameOver:setFillColor( 1, 0, 0, 1 )
           gameOver:addEventListener( "tap", gotoMenu )
+          
         end    
 --======================================colisões com o cenário
         elseif						
