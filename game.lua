@@ -1,5 +1,4 @@
 local composer = require ("composer")
-
 local scene = composer.newScene( )
 
 local background = display.newImageRect("fundo.jpg", 330, 580)
@@ -8,7 +7,6 @@ background.y = display.contentCenterY
 
 local vidas = 3
 
------------------------------------------------------------
 local paredes = display.newGroup()
 
 local parede = display.newImageRect (paredes,"parede.png", 10, 570)
@@ -66,17 +64,15 @@ chao9.x = display.contentCenterX+40
 chao9.y = display.contentCenterY-249
 chao9.rotation = 90
 
+local fundo = display.newImageRect("menu/fundo.png", 100, 70) --fundo das vidas
+fundo.x = display.contentCenterX+100
+fundo.y = display.contentCenterY-260
 
---[[local borracha01 = display.newImageRect ("borracha.png", 40, 30)
-borracha01.x = display.contentCenterX-100
-borracha01.y = display.contentCenterY-200
-borracha01.myName = "borracha01"
-]]
-
-
-
-local livesText = display.newText( "Vidas: " .. vidas, 60, 0, native.systemFont, 20 )
+local livesText = display.newText( "Vidas: " .. vidas, 55, 0, native.systemFont, 19 )
 livesText:setFillColor( 0 )
+livesText.x = display.contentCenterX+100
+livesText.y = display.contentCenterY-268
+
 
 --===============================================================
 local physics =  require ("physics")
@@ -96,8 +92,6 @@ physics.addBody( chao7, "static",{bounce = 0})
 physics.addBody( chao8, "static",{bounce = 0})
 physics.addBody( chao9, "static" ,{bounce = 0})
 
-
-
 local function borracha()
   local borracha = display.newImageRect("borracha.png", 15, 20 )
   borracha.x = display.contentCenterX
@@ -107,14 +101,6 @@ local function borracha()
   borracha:setLinearVelocity(-40,0)
 end
 timer.performWithDelay( 5000, borracha, 0 )
-
-
-
---physics.addBody( borracha01, "dynamic",{bounce = 0,5} )
-
---borracha01:setLinearVelocity ( 30, 0 )
-
-
 
 
 local buttons = {}
@@ -153,11 +139,7 @@ local sequenceSprite = {
 	{name = "correndoEsquerda", frames = {19,20,22,23,24,25,26}, time = 500, loopCount = 0 },
 	{name = "pulandoEsquerda", frames = {27,28,29,30,28}, time = 1000, loopCount = 1},
 	{name = "caindoEsquerda", frames = {36,37,38,39,39,39,39,40,40,41,41,42,42,43,43,44,44,45,45}, time = 1000, loopCount = 1},
-
-
 }
-
-
 
 local player = display.newSprite( sheet, sequenceSprite)
 player.x = display.contentCenterX-100
@@ -210,9 +192,14 @@ local touchFunction = function(e)
 end
 
 local function gotoMenu()
-	composer.gotoScene( "menu", { time=800, effect="crossFade" } )
+  composer.removeScene("game")
+	composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
 end
 
+local function gotoGameOver()
+  composer.removeScene("game")
+  composer.gotoScene("gameOver", {time = 800, effect = "crossFade"})
+end
 --====================================================================
 
 local function onCollision( event )
@@ -252,12 +239,19 @@ local function onCollision( event )
            	end
         if (vidas <= 0) then
           display.remove( player )
+          display.remove( buttons[1] )
+          display.remove( buttons[2] )
+          display.remove( buttons[3] )
+          
+          timer.performWithDelay(1000, gotoGameOver)
+
+          --[[
           gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
           gameOver:setFillColor( 1, 0, 0, 1 )
-          gameOver:addEventListener( "tap", gotoMenu )
-          
+          gameOver:addEventListener( "tap", gotoGameOver )
+          ]]
         end    
---======================================colisões com o cenário
+--====================================colisões com o cenário========================================
         elseif						
         	(obj1.myName == "borracha" and obj2.myName == "blocoDireito")	then
         	 obj1:setLinearVelocity ( -30, 0 )
@@ -292,8 +286,43 @@ end
 
 Runtime:addEventListener( "collision", onCollision )
 
+function scene:create( event )
+  local sceneGroup = self.view
+end
 
+function scene:show( event )
 
+  local sceneGroup = self.view
+  local phase = event.phase
+
+  if ( phase == "will" ) then
+    -- Code here runs when the scene is still off screen (but is about to come on screen)
+  elseif ( phase == "did" ) then
+    -- Code here runs when the scene is entirely on screen
+    -- Start the music!
+    --audio.play( musicTrack, { channel=1, loops=-1 } )
+  end
+end
+
+function scene:hide( event )
+  local sceneGroup = self.view
+  local phase = event.phase
+
+  if ( phase == "will" ) then
+
+  elseif ( phase == "did" ) then
+--    audio.stop( 1 )
+  end
+end
+
+function scene:destroy( event )
+
+  local sceneGroup = self.view
+end
+
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
 return scene
----------
