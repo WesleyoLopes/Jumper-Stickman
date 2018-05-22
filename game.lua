@@ -5,7 +5,20 @@ local vidas = 3
 local player
 local livesText
 local background
+local parede
+local parede2
+local fundo
+local chao1
+local chao2
+local chao3
+local chao4
+local chao5
+local chao6
+local chao7
+local chao8
+local chao9
 
+local borrachas
 
 --===============================================================
 local physics =  require ("physics")
@@ -21,7 +34,7 @@ local function borracha()
   physics.addBody( borracha, "dynamic",{bounce = 0,5} )
   borracha:setLinearVelocity(-40,0)
 end
-timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
+borrachas = timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
 
 
 local buttons = {}
@@ -71,6 +84,7 @@ local function updateText()
 
 end
 
+
 local function jump()
   player:applyLinearImpulse( 0, -0.030, player.x, player.y )
   	if directJump == "direita" then
@@ -113,7 +127,7 @@ end
 function gotoGameOver()
   print("entrou")
   composer.removeScene("game")
-  composer.gotoScene("gameOver", {time = 800, effect = "crossFade"})
+  composer.gotoScene("gameOver", {time = 300, effect = "zoomInOut"})
 end
 --====================================================================
 
@@ -158,7 +172,7 @@ local function onCollision( event )
           display.remove( buttons[2] )
           display.remove( buttons[3] )
           
-          timer.performWithDelay(1000, gotoGameOver)
+          timer.performWithDelay(10, gotoGameOver)
       
 
          -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
@@ -199,6 +213,28 @@ for j = 1, #buttons do
 end
 
 Runtime:addEventListener( "collision", onCollision )
+--================================================================
+--[[local socondsLeft = 4
+
+function updateTime()
+  secondsLeft = secondsLeft - 1
+  if secondsLeft > 0 then
+  local clockImg = display.newImage(secondsLeft.."armadilha1.png")
+  clockImg.x = display.contentCenterX
+    transition.fadeOut(clockImg, {time = 1000})
+  end
+   
+  local timeDisplay = secondsLeft
+  if secondsLeft == 0 then
+    clockImg = display.newImage("start.png")
+    clockImg.x = centerX
+    clockImg.y = 130
+    timer.cancel(countDownTimer)
+    transition.fadeOut(clockImg,{time = 1000})
+    
+  end
+end
+]]
 --==============================================================================================
 function scene:create( event )
   local sceneGroup = self.view
@@ -208,62 +244,61 @@ function scene:create( event )
 
   local paredes = display.newGroup()
 
-  local parede = display.newImageRect (paredes,"parede.png", 10, 570)
+  parede = display.newImageRect (paredes,"parede.png", 10, 570)
   parede.x = display.contentCenterX-155
   parede.y = display.contentCenterY
   parede.myName = "parede1"
 
-  local parede2 = display.newImageRect (paredes,"parede.png", 10, 570)
+  parede2 = display.newImageRect (paredes,"parede.png", 10, 570)
   parede2.x = display.contentCenterX+155
   parede2.y = display.contentCenterY
   parede2.myName = "parede2"
 
-  local chao1 = display.newImageRect (paredes, "chao1.png", 350, 20)--chão
+  chao1 = display.newImageRect (paredes, "chao1.png", 350, 20)--chão
   chao1.x = display.contentCenterX
   chao1.y = display.contentCenterY+275
 
-  local chao2 = display.newImageRect (paredes, "chao2.png", 200, 120)--bloco direito
+  chao2 = display.newImageRect (paredes, "chao2.png", 200, 120)--bloco direito
   chao2.x = display.contentCenterX+150
   chao2.y = display.contentCenterY+280
 
-  local chao3 = display.newImageRect (paredes, "parede.png", 10,250)--chão 2
+  chao3 = display.newImageRect (paredes, "parede.png", 10,250)--chão 2
   chao3.x = display.contentCenterX-35
   chao3.y = display.contentCenterY+125
   chao3.rotation = 90
 
-  local chao4 = display.newImageRect (paredes, "chao2.png", 150, 150)--bloco direito2
+  chao4 = display.newImageRect (paredes, "chao2.png", 150, 150)--bloco direito2
   chao4.x = display.contentCenterX+100
   chao4.y = display.contentCenterY-30
   chao4.myName = "blocoDireito"
 
-  local chao5 = display.newImageRect (paredes, "parede.png", 10,200)--chão 3
+  chao5 = display.newImageRect (paredes, "parede.png", 10,200)--chão 3
   chao5.x = display.contentCenterX+10
   chao5.y = display.contentCenterY+40
   chao5.rotation = 90
 
-  local chao6 = display.newImageRect (paredes, "parede.png", 10,100)--chão 4
+  chao6 = display.newImageRect (paredes, "parede.png", 10,100)--chão 4
   chao6.x = display.contentCenterX-100
   chao6.y = display.contentCenterY-25
   chao6.rotation = 90
 
-  local chao7 = display.newImageRect (paredes, "parede.png", 10,200)--chão 5
+  chao7 = display.newImageRect (paredes, "parede.png", 10,200)--chão 5
   chao7.x = display.contentCenterX
   chao7.y = display.contentCenterY-99
   chao7.rotation = 90
 
-
-  local chao8 = display.newImageRect (paredes, "parede.png", 10,250)--chão 6
+  chao8 = display.newImageRect (paredes, "parede.png", 10,250)--chão 6
   chao8.x = display.contentCenterX-50
   chao8.y = display.contentCenterY-179
   chao8.rotation = 90
 
 
-  local chao9 = display.newImageRect (paredes, "parede.png", 10,280)--chão 7
+  chao9 = display.newImageRect (paredes, "parede.png", 10,280)--chão 7
   chao9.x = display.contentCenterX+40
   chao9.y = display.contentCenterY-249
   chao9.rotation = 90
 
-  local fundo = display.newImageRect("menu/fundo.png", 100, 70) --fundo das vidas
+  fundo = display.newImageRect("menu/fundo.png", 100, 70) --fundo das vidas
   fundo.x = display.contentCenterX+100
   fundo.y = display.contentCenterY-260
 
@@ -293,8 +328,8 @@ function scene:create( event )
 
 
 
-
 end
+
 
 function scene:show( event )
 
@@ -325,6 +360,22 @@ end
 function scene:destroy( event )
   local sceneGroup = self.view
   display.remove( background )
+  display.remove(chao1)
+  display.remove(chao2)
+  display.remove(chao3)
+  display.remove(chao4)
+  display.remove(chao5)
+  display.remove(chao6)
+  display.remove(chao7)
+  display.remove(chao8)
+  display.remove(chao9)
+  display.remove(parede)
+  display.remove(parede2)
+  display.remove(fundo)
+  display.remove(livesText)
+
+  timer.cancel(borrachas)
+
   print( "destroy" )
 
 end

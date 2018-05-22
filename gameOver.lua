@@ -4,7 +4,7 @@ local scene = composer.newScene( )
 
 function gotoMenu()
   composer.removeScene("gameOver")
-  composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
+  composer.gotoScene( "menu", { time = 100, effect = "zoomInOut" } )
 end
 
 function scene:create( event )
@@ -16,7 +16,7 @@ function scene:create( event )
 	background.y = display.contentCenterY
 	
 
-    timer.performWithDelay(2000, gotoMenu)
+    timer.performWithDelay(5000, gotoMenu)
 end
 
 function scene:show( event )

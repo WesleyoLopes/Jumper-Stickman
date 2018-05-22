@@ -7,12 +7,12 @@ local menuSound
 local function iniciarJogo()
     audio.setVolume(0 , {chanel =1})
 	composer.removeScene( "menu" )
-	composer.gotoScene("game", { time=1000, effect="slideUp" } )
+	composer.gotoScene("game", {time = 10} )
 end
 
 local function gameOver()
     composer.removeScene("menu")
-    composer.gotoScene( "gameOver", {time = 1000, effect = "slideDown"} )
+    composer.gotoScene( "gameOver", {time = 100, effect = "zoomInOut"} )
 end
 
 local function exitGame()
