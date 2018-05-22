@@ -1,6 +1,12 @@
 local composer = require ("composer")
 local scene = composer.newScene( )
 
+
+function gotoMenu()
+  composer.removeScene("gameOver")
+  composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
+end
+
 function scene:create( event )
 
 	local sceneGroup = self.view
@@ -9,6 +15,8 @@ function scene:create( event )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 	
+
+    timer.performWithDelay(2000, gotoMenu)
 end
 
 function scene:show( event )

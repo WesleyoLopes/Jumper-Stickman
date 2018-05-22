@@ -6,10 +6,14 @@ local menuSound
 
 local function iniciarJogo()
     audio.setVolume(0 , {chanel =1})
-	composer.removeScene( "game" )
-	composer.gotoScene("game", { time=2000, effect="slideUp" } )
+	composer.removeScene( "menu" )
+	composer.gotoScene("game", { time=1000, effect="slideUp" } )
 end
 
+local function gameOver()
+    composer.removeScene("menu")
+    composer.gotoScene( "gameOver", {time = 1000, effect = "slideDown"} )
+end
 
 local function exitGame()
     timer.performWithDelay( 1000,
@@ -49,6 +53,7 @@ function scene:create(event)
 
     jogar:addEventListener( "tap", iniciarJogo)
     sair:addEventListener("tap", exitGame)
+    fases:addEventListener( "tap", gameOver )
 
 --adicionando audio
     menuSound = audio.loadStream("audio/audioMenu.mp3")

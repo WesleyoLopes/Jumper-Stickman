@@ -1,77 +1,10 @@
 local composer = require ("composer")
 local scene = composer.newScene( )
 
-local background = display.newImageRect("fundo.jpg", 330, 580)
-background.x = display.contentCenterX
-background.y = display.contentCenterY
-
 local vidas = 3
-
-local paredes = display.newGroup()
-
-local parede = display.newImageRect (paredes,"parede.png", 10, 570)
-parede.x = display.contentCenterX-155
-parede.y = display.contentCenterY
-parede.myName = "parede1"
-
-local parede2 = display.newImageRect (paredes,"parede.png", 10, 570)
-parede2.x = display.contentCenterX+155
-parede2.y = display.contentCenterY
-parede2.myName = "parede2"
-
-local chao1 = display.newImageRect (paredes, "chao1.png", 350, 20)--chão
-chao1.x = display.contentCenterX
-chao1.y = display.contentCenterY+275
-
-local chao2 = display.newImageRect (paredes, "chao2.png", 200, 120)--bloco direito
-chao2.x = display.contentCenterX+150
-chao2.y = display.contentCenterY+280
-
-local chao3 = display.newImageRect (paredes, "parede.png", 10,250)--chão 2
-chao3.x = display.contentCenterX-35
-chao3.y = display.contentCenterY+125
-chao3.rotation = 90
-
-local chao4 = display.newImageRect (paredes, "chao2.png", 150, 150)--bloco direito2
-chao4.x = display.contentCenterX+100
-chao4.y = display.contentCenterY-30
-chao4.myName = "blocoDireito"
-
-local chao5 = display.newImageRect (paredes, "parede.png", 10,200)--chão 3
-chao5.x = display.contentCenterX+10
-chao5.y = display.contentCenterY+40
-chao5.rotation = 90
-
-local chao6 = display.newImageRect (paredes, "parede.png", 10,100)--chão 4
-chao6.x = display.contentCenterX-100
-chao6.y = display.contentCenterY-25
-chao6.rotation = 90
-
-local chao7 = display.newImageRect (paredes, "parede.png", 10,200)--chão 5
-chao7.x = display.contentCenterX
-chao7.y = display.contentCenterY-99
-chao7.rotation = 90
-
-
-local chao8 = display.newImageRect (paredes, "parede.png", 10,250)--chão 6
-chao8.x = display.contentCenterX-50
-chao8.y = display.contentCenterY-179
-chao8.rotation = 90
-
-
-local chao9 = display.newImageRect (paredes, "parede.png", 10,280)--chão 7
-chao9.x = display.contentCenterX+40
-chao9.y = display.contentCenterY-249
-chao9.rotation = 90
-
-local fundo = display.newImageRect("menu/fundo.png", 100, 70) --fundo das vidas
-fundo.x = display.contentCenterX+100
-fundo.y = display.contentCenterY-260
-
-local livesText = display.newText( "Vidas: " .. vidas, 55, 0, native.systemFont, 19 )
-livesText:setFillColor( 0 )
-livesText.x = display.contentCenterX+100
-livesText.y = display.contentCenterY-268
+local player
+local livesText
+local background
 
 
 --===============================================================
@@ -79,18 +12,6 @@ local physics =  require ("physics")
 physics.start()
 
 physics.setGravity (0,6)
-
-physics.addBody (parede, "static",{bounce = 0})
-physics.addBody (parede2, "static",{bounce = 0})
-physics.addBody (chao1, "static",{bounce = 0})
-physics.addBody (chao2, "static",{bounce = 0})
-physics.addBody(chao3, "static",{bounce = 0})
-physics.addBody(chao4, "static",{bounce = 0})
-physics.addBody( chao5, "static",{bounce = 0})
-physics.addBody( chao6, "static",{bounce = 0})
-physics.addBody( chao7, "static",{bounce = 0})
-physics.addBody( chao8, "static",{bounce = 0})
-physics.addBody( chao9, "static" ,{bounce = 0})
 
 local function borracha()
   local borracha = display.newImageRect("borracha.png", 15, 20 )
@@ -100,7 +21,7 @@ local function borracha()
   physics.addBody( borracha, "dynamic",{bounce = 0,5} )
   borracha:setLinearVelocity(-40,0)
 end
-timer.performWithDelay( 5000, borracha, 0 )
+timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
 
 
 local buttons = {}
@@ -140,13 +61,6 @@ local sequenceSprite = {
 	{name = "pulandoEsquerda", frames = {27,28,29,30,28}, time = 1000, loopCount = 1},
 	{name = "caindoEsquerda", frames = {36,37,38,39,39,39,39,40,40,41,41,42,42,43,43,44,44,45,45}, time = 1000, loopCount = 1},
 }
-
-local player = display.newSprite( sheet, sequenceSprite)
-player.x = display.contentCenterX-100
-player.y = display.contentCenterY+200
-player.myName = "player"
-
-physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
 local directJump
 
@@ -191,12 +105,13 @@ local touchFunction = function(e)
 	end
 end
 
-local function gotoMenu()
+function gotoMenu()
   composer.removeScene("game")
 	composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
 end
 
-local function gotoGameOver()
+function gotoGameOver()
+  print("entrou")
   composer.removeScene("game")
   composer.gotoScene("gameOver", {time = 800, effect = "crossFade"})
 end
@@ -237,19 +152,19 @@ local function onCollision( event )
            	vidas = vidas-1
            	livesText.text = "Vidas: " .. vidas 
            	end
-        if (vidas <= 0) then
+        if (vidas <= 2) then
           display.remove( player )
           display.remove( buttons[1] )
           display.remove( buttons[2] )
           display.remove( buttons[3] )
           
           timer.performWithDelay(1000, gotoGameOver)
+      
 
-          --[[
-          gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
-          gameOver:setFillColor( 1, 0, 0, 1 )
-          gameOver:addEventListener( "tap", gotoGameOver )
-          ]]
+         -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
+          --gameOver:setFillColor( 1, 0, 0, 1 )
+        -- gameOver:addEventListener( "tap", gotoGameOver )
+  
         end    
 --====================================colisões com o cenário========================================
         elseif						
@@ -270,7 +185,6 @@ local function onCollision( event )
         elseif
           (obj1.myName == "parede2" and obj2.myName == "borracha")  then  
            obj2:setLinearVelocity ( -30, 0 ) 
---==========================================================================================================
 
         end
 
@@ -285,9 +199,101 @@ for j = 1, #buttons do
 end
 
 Runtime:addEventListener( "collision", onCollision )
-
+--==============================================================================================
 function scene:create( event )
   local sceneGroup = self.view
+  background = display.newImageRect("fundo.jpg", 330, 580)
+  background.x = display.contentCenterX
+  background.y = display.contentCenterY
+
+  local paredes = display.newGroup()
+
+  local parede = display.newImageRect (paredes,"parede.png", 10, 570)
+  parede.x = display.contentCenterX-155
+  parede.y = display.contentCenterY
+  parede.myName = "parede1"
+
+  local parede2 = display.newImageRect (paredes,"parede.png", 10, 570)
+  parede2.x = display.contentCenterX+155
+  parede2.y = display.contentCenterY
+  parede2.myName = "parede2"
+
+  local chao1 = display.newImageRect (paredes, "chao1.png", 350, 20)--chão
+  chao1.x = display.contentCenterX
+  chao1.y = display.contentCenterY+275
+
+  local chao2 = display.newImageRect (paredes, "chao2.png", 200, 120)--bloco direito
+  chao2.x = display.contentCenterX+150
+  chao2.y = display.contentCenterY+280
+
+  local chao3 = display.newImageRect (paredes, "parede.png", 10,250)--chão 2
+  chao3.x = display.contentCenterX-35
+  chao3.y = display.contentCenterY+125
+  chao3.rotation = 90
+
+  local chao4 = display.newImageRect (paredes, "chao2.png", 150, 150)--bloco direito2
+  chao4.x = display.contentCenterX+100
+  chao4.y = display.contentCenterY-30
+  chao4.myName = "blocoDireito"
+
+  local chao5 = display.newImageRect (paredes, "parede.png", 10,200)--chão 3
+  chao5.x = display.contentCenterX+10
+  chao5.y = display.contentCenterY+40
+  chao5.rotation = 90
+
+  local chao6 = display.newImageRect (paredes, "parede.png", 10,100)--chão 4
+  chao6.x = display.contentCenterX-100
+  chao6.y = display.contentCenterY-25
+  chao6.rotation = 90
+
+  local chao7 = display.newImageRect (paredes, "parede.png", 10,200)--chão 5
+  chao7.x = display.contentCenterX
+  chao7.y = display.contentCenterY-99
+  chao7.rotation = 90
+
+
+  local chao8 = display.newImageRect (paredes, "parede.png", 10,250)--chão 6
+  chao8.x = display.contentCenterX-50
+  chao8.y = display.contentCenterY-179
+  chao8.rotation = 90
+
+
+  local chao9 = display.newImageRect (paredes, "parede.png", 10,280)--chão 7
+  chao9.x = display.contentCenterX+40
+  chao9.y = display.contentCenterY-249
+  chao9.rotation = 90
+
+  local fundo = display.newImageRect("menu/fundo.png", 100, 70) --fundo das vidas
+  fundo.x = display.contentCenterX+100
+  fundo.y = display.contentCenterY-260
+
+  livesText = display.newText( "Vidas: " .. vidas, 55, 0, native.systemFont, 19 )
+  livesText:setFillColor( 0 )
+  livesText.x = display.contentCenterX+100
+  livesText.y = display.contentCenterY-268
+
+  player = display.newSprite( sheet, sequenceSprite)
+  player.x = display.contentCenterX-100
+  player.y = display.contentCenterY+200
+  player.myName = "player"
+
+  physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
+
+  physics.addBody (parede, "static",{bounce = 0})
+  physics.addBody (parede2, "static",{bounce = 0})
+  physics.addBody (chao1, "static",{bounce = 0})
+  physics.addBody (chao2, "static",{bounce = 0})
+  physics.addBody(chao3, "static",{bounce = 0})
+  physics.addBody(chao4, "static",{bounce = 0})
+  physics.addBody( chao5, "static",{bounce = 0})
+  physics.addBody( chao6, "static",{bounce = 0})
+  physics.addBody( chao7, "static",{bounce = 0})
+  physics.addBody( chao8, "static",{bounce = 0})
+  physics.addBody( chao9, "static" ,{bounce = 0})
+
+
+
+
 end
 
 function scene:show( event )
@@ -304,6 +310,7 @@ function scene:show( event )
   end
 end
 
+
 function scene:hide( event )
   local sceneGroup = self.view
   local phase = event.phase
@@ -311,13 +318,15 @@ function scene:hide( event )
   if ( phase == "will" ) then
 
   elseif ( phase == "did" ) then
---    audio.stop( 1 )
+
   end
 end
 
 function scene:destroy( event )
-
   local sceneGroup = self.view
+  display.remove( background )
+  print( "destroy" )
+
 end
 
 scene:addEventListener( "create", scene )
