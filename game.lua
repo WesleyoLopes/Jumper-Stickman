@@ -31,13 +31,24 @@ local function borracha()
   borracha.x = display.contentCenterX
   borracha.y = display.contentCenterY-270
   borracha.myName = "borracha"
-  physics.addBody( borracha, "dynamic",{bounce = 0,5} )
+  physics.addBody( borracha, "dynamic",{bounce = 0.5} )
   borracha:setLinearVelocity(-40,0)
 end
+--[[
+local function lapis()
+  local lapis = display.newImageRect("lapis.png", 30, 30)
+  lapis.x = display.contentCenterX
+  lapis.y = display.contentCenterY-270
+  lapis.myName = "lapis"
+  physics.addBody(lapis, "dynamic", {bounce = 1})
+  lapis:setLinearVelocity( -50, 0 )
+end 
+]]
 borrachas = timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
 
+--lapis = timer.performWithDelay( 0, lapis, 20 )
 
-local buttons = {}
+buttons = {}
 
 buttons[1] = display.newImage("botao.png")
 buttons[1].x = 265
@@ -166,21 +177,21 @@ local function onCollision( event )
            	vidas = vidas-1
            	livesText.text = "Vidas: " .. vidas 
            	end
-        if (vidas <= 2) then
+        end
+        if (vidas <= 0) then
           display.remove( player )
-          display.remove( buttons[1] )
-          display.remove( buttons[2] )
-          display.remove( buttons[3] )
+          display.remove(buttons[1])
+          display.remove(buttons[2])
+          display.remove(buttons[3])
           
           timer.performWithDelay(10, gotoGameOver)
       
 
-         -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
-          --gameOver:setFillColor( 1, 0, 0, 1 )
-        -- gameOver:addEventListener( "tap", gotoGameOver )
+           -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
+            --gameOver:setFillColor( 1, 0, 0, 1 )
+            -- gameOver:addEventListener( "tap", gotoGameOver )
   
-        end    
---====================================colisões com o cenário========================================
+          --====================================colisões com o cenário========================================
         elseif						
         	(obj1.myName == "borracha" and obj2.myName == "blocoDireito")	then
         	 obj1:setLinearVelocity ( -30, 0 )
@@ -199,10 +210,8 @@ local function onCollision( event )
         elseif
           (obj1.myName == "parede2" and obj2.myName == "borracha")  then  
            obj2:setLinearVelocity ( -30, 0 ) 
-
         end
-
-    end
+end
 end
 
 local j
@@ -214,27 +223,10 @@ end
 
 Runtime:addEventListener( "collision", onCollision )
 --================================================================
---[[local socondsLeft = 4
+local tuto
 
-function updateTime()
-  secondsLeft = secondsLeft - 1
-  if secondsLeft > 0 then
-  local clockImg = display.newImage(secondsLeft.."armadilha1.png")
-  clockImg.x = display.contentCenterX
-    transition.fadeOut(clockImg, {time = 1000})
-  end
-   
-  local timeDisplay = secondsLeft
-  if secondsLeft == 0 then
-    clockImg = display.newImage("start.png")
-    clockImg.x = centerX
-    clockImg.y = 130
-    timer.cancel(countDownTimer)
-    transition.fadeOut(clockImg,{time = 1000})
-    
-  end
-end
-]]
+
+
 --==============================================================================================
 function scene:create( event )
   local sceneGroup = self.view
@@ -312,6 +304,37 @@ function scene:create( event )
   player.y = display.contentCenterY+200
   player.myName = "player"
 
+
+  local tutoButtons = {}
+
+  tutoButtons[1] = display.newImage("tutoDireita.png")
+  tutoButtons[1].x = 265
+  tutoButtons[1].y = 240
+
+  tutoButtons[2] = display.newImage("tutoEsquerda.png")
+  tutoButtons[2].x = 55
+  tutoButtons[2].y = 240
+
+  tutoButtons[3] = display.newImage("tutoJump.png")
+  tutoButtons[3].x = 160
+  tutoButtons[3].y = 240
+
+
+
+----LAPIS
+  local lapis = {}
+
+  lapis[1] = display.newImage("lapis.png")
+  lapis[1].x = 160
+  lapis[1].y = 240
+  lapis[1].myName = "l1"
+
+  lapis[2] = display.newImage("lapis.png")
+  lapis[2].x = 55
+  lapis[2].y = 240
+  lapis[2].myName = "l2"
+
+
   physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
   physics.addBody (parede, "static",{bounce = 0})
@@ -326,9 +349,16 @@ function scene:create( event )
   physics.addBody( chao8, "static",{bounce = 0})
   physics.addBody( chao9, "static" ,{bounce = 0})
 
+  function delTuto ()
+  display.remove(tutoButtons[1])
+  display.remove(tutoButtons[2])
+  display.remove(tutoButtons[3])
+  end
 
+  timer.performWithDelay(5000, delTuto)
 
 end
+
 
 
 function scene:show( event )
