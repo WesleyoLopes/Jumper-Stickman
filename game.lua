@@ -1,7 +1,7 @@
 local composer = require ("composer")
 local scene = composer.newScene( )
 
-local vidas = 3
+local vidas = 99
 local pontos = 0
 local player
 local livesText
@@ -20,7 +20,6 @@ local chao8
 local chao9
 
 local proxima
-local mensagem
 local borrachas
 
 --===============================================================
@@ -37,7 +36,7 @@ local function borracha()
   physics.addBody( borracha, "dynamic",{bounce = 0,5} )
   borracha:setLinearVelocity(-40,0)
 end
-borrachas = timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
+borrachas = timer.performWithDelay( 9000, borracha, 0 ) --timer.cancel( )
 
 
 local function lapis()
@@ -50,6 +49,11 @@ local function lapis()
 end
 lapis = timer.performWithDelay( 5000, lapis, 0 ) --timer.cancel( )
 
+function removeButtons()
+  display.remove( buttons[1] )
+  display.remove( buttons[2] )
+  display.remove( buttons[3] )
+end
 
 
 local buttons = {}
@@ -68,6 +72,7 @@ buttons[3] = display.newImage("botao.png")
 buttons[3].x = 160
 buttons[3].y = 240
 buttons[3].myName = "pular"
+
 
 
 local sheetOptions = {
@@ -143,6 +148,11 @@ function gotoGameOver()
   composer.removeScene("game")
   composer.gotoScene("gameOver", {time = 300, effect = "zoomInOut"})
 end
+
+function gotoProxFase()
+  composer.removeScene( "game" )
+  composer.gotoScene( "proxFase", {time = 700, effect = "slideDown"} )
+end
 --====================================================================
 
 local function onCollision( event )
@@ -208,12 +218,11 @@ local function onCollision( event )
         
         elseif
           (obj1.myName == "player" and obj2.myName == "prox") then
-           mensagem = display.newText( "PROXIMA FASE EM BREVE" , 180, 200, native.systemFont, 20 )
-           mensagem:setFillColor( 1, 0, 0, 1 )
+          timer.performWithDelay( 0, gotoProxFase)
+
         elseif
-          (obj2.myName == "player" and obj2.myName == "prox") then
-           mensagem = display.newText( "PROXIMA FASE EM BREVE" , 180, 200, native.systemFont, 20 )
-           mensagem:setFillColor( 1, 0, 0, 1 )
+          (obj2.myName == "player" and obj1.myName == "prox") then
+           timer.performWithDelay( 0, gotoProxFase) 
 
         elseif		
         	(obj1.myName == "borracha" and obj2.myName == "blocoDireito")	then
@@ -310,9 +319,9 @@ function scene:create( event )
   chao9.y = display.contentCenterY-249
   chao9.rotation = 90
 --================================================================
-  proxima = display.newImageRect( "proxFase.png", 280, 5)
+  proxima = display.newImageRect( paredes, "proxFase.png", 280, 5)
   proxima.x = display.contentCenterX-20
-  proxima.y = display.contentCenterY-260
+  proxima.y = display.contentCenterY-290
   proxima.myName = "prox"
 
   fundoVidas = display.newImageRect("menu/fundoVidas.png", 100, 70) --fundo das vidas
@@ -338,6 +347,29 @@ function scene:create( event )
   player.y = display.contentCenterY+200
   player.myName = "player"
 
+
+
+local tutorial = {}
+tutorial[1] = display.newImage( "tutoDireita.png")
+tutorial[1].x = 265
+tutorial[1].y = 240
+
+tutorial[2] = display.newImage( "tutoEsquerda.png")
+tutorial[2].x = 55
+tutorial[2].y = 240
+
+tutorial[3] = display.newImage( "tutoJump.png")
+tutorial[3].x = 160
+tutorial[3].y = 240
+
+local function removeTuto()
+  display.remove( tutorial[1] )
+  display.remove( tutorial[2] )
+  display.remove( tutorial[3] )
+end
+
+timer.performWithDelay( 5000, removeTuto )
+
   physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
   physics.addBody (parede, "static",{bounce = 0})
@@ -352,7 +384,7 @@ function scene:create( event )
   physics.addBody( chao8, "static",{bounce = 0})
   physics.addBody( chao9, "static" ,{bounce = 0})
 
-  physics.addBody( proxima, "kinematic", {bounce = 0} )
+  physics.addBody( proxima, "static", {bounce = 0})
 end
 
 

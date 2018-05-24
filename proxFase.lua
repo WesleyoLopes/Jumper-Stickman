@@ -4,14 +4,14 @@ local scene = composer.newScene( )
 
 function gotoMenu()
   composer.removeScene("gameOver")
-  composer.gotoScene( "menu", { time = 100, effect = "zoomInOut" } ) --
+  composer.gotoScene( "menu", { time = 100, effect = "zoomInOut" } )
 end
 
 function scene:create( event )
 
 	local sceneGroup = self.view
 
-	local background = display.newImageRect ( sceneGroup, "menu/GAMEOVER.png", 330, 580 )
+	local background = display.newImageRect ( sceneGroup, "construcao.png", 330, 580 )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 	
