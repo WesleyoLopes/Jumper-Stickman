@@ -2,6 +2,7 @@ local composer = require ("composer")
 local scene = composer.newScene( )
 
 local vidas = 3
+local pontos = 0
 local player
 local livesText
 local background
@@ -18,6 +19,8 @@ local chao7
 local chao8
 local chao9
 
+local proxima
+local mensagem
 local borrachas
 
 --===============================================================
@@ -28,13 +31,25 @@ physics.setGravity (0,6)
 
 local function borracha()
   local borracha = display.newImageRect("borracha.png", 15, 20 )
-  borracha.x = display.contentCenterX
+  borracha.x = display.contentCenterX-100
   borracha.y = display.contentCenterY-270
   borracha.myName = "borracha"
   physics.addBody( borracha, "dynamic",{bounce = 0,5} )
   borracha:setLinearVelocity(-40,0)
 end
 borrachas = timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
+
+
+local function lapis()
+  local lapis = display.newImageRect("lapis.png", 30, 30 )
+  lapis.x = display.contentCenterX
+  lapis.y = display.contentCenterY-200
+  lapis.myName = "lapis"
+  physics.addBody( lapis, "dynamic",{bounce = 0.2} )
+  lapis:setLinearVelocity(40,0)
+end
+lapis = timer.performWithDelay( 5000, lapis, 0 ) --timer.cancel( )
+
 
 
 local buttons = {}
@@ -65,7 +80,7 @@ local sheetOptions = {
 
 local sheet = graphics.newImageSheet( "spriteCompleta.png", sheetOptions)
 
-local sequenceSprite = {
+sequenceSprite = {
 	{name = "paradoDireita", frames = {1}, time = 500, loopCount = 0},
 	{name = "correndoDireita", frames = {3,4,5,6,7,8,9,10}, time = 500, loopCount = 0 },
 	{name = "pulandoDireita", frames = {12,13,14,16,16,16,12}, time = 1000, loopCount = 1 },
@@ -79,9 +94,8 @@ local directJump
 
 
 local function updateText()
-
   livesText.text = "Vidas: " .. vidas 
-
+  pontostText.text = "pontos" .. pontos
 end
 
 
@@ -159,14 +173,14 @@ local function onCollision( event )
            	player:setSequence( "caindoEsquerda" )
            	player:play()
            	vidas = vidas-1
-           	livesText.text = "Vidas: " .. vidas 
+           	livesText.text = vidas 
            else
            	player:setSequence( "caindoDireita" )
            	player:play()
            	vidas = vidas-1
-           	livesText.text = "Vidas: " .. vidas 
+           	livesText.text = vidas 
            	end
-        if (vidas <= 2) then
+        if (vidas <= 0) then
           display.remove( player )
           display.remove( buttons[1] )
           display.remove( buttons[2] )
@@ -175,13 +189,33 @@ local function onCollision( event )
           timer.performWithDelay(10, gotoGameOver)
       
 
-         -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
-          --gameOver:setFillColor( 1, 0, 0, 1 )
+        -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
+        --gameOver:setFillColor( 1, 0, 0, 1 )
         -- gameOver:addEventListener( "tap", gotoGameOver )
   
         end    
 --====================================colisões com o cenário========================================
-        elseif						
+        elseif
+          (obj1.myName == "lapis" and obj2.myName == "player") then
+          display.remove( obj1 )
+          pontos = pontos + 1
+          pontosText.text =  pontos
+        elseif
+          (obj1.myName == "player" and obj2.myName == "lapis") then
+          display.remove( obj2 )
+          pontos = pontos + 1
+          pontosText.text =  pontos
+        
+        elseif
+          (obj1.myName == "player" and obj2.myName == "prox") then
+           mensagem = display.newText( "PROXIMA FASE EM BREVE" , 180, 200, native.systemFont, 20 )
+           mensagem:setFillColor( 1, 0, 0, 1 )
+        elseif
+          (obj2.myName == "player" and obj2.myName == "prox") then
+           mensagem = display.newText( "PROXIMA FASE EM BREVE" , 180, 200, native.systemFont, 20 )
+           mensagem:setFillColor( 1, 0, 0, 1 )
+
+        elseif		
         	(obj1.myName == "borracha" and obj2.myName == "blocoDireito")	then
         	 obj1:setLinearVelocity ( -30, 0 )
         elseif						
@@ -213,28 +247,6 @@ for j = 1, #buttons do
 end
 
 Runtime:addEventListener( "collision", onCollision )
---================================================================
---[[local socondsLeft = 4
-
-function updateTime()
-  secondsLeft = secondsLeft - 1
-  if secondsLeft > 0 then
-  local clockImg = display.newImage(secondsLeft.."armadilha1.png")
-  clockImg.x = display.contentCenterX
-    transition.fadeOut(clockImg, {time = 1000})
-  end
-   
-  local timeDisplay = secondsLeft
-  if secondsLeft == 0 then
-    clockImg = display.newImage("start.png")
-    clockImg.x = centerX
-    clockImg.y = 130
-    timer.cancel(countDownTimer)
-    transition.fadeOut(clockImg,{time = 1000})
-    
-  end
-end
-]]
 --==============================================================================================
 function scene:create( event )
   local sceneGroup = self.view
@@ -297,15 +309,29 @@ function scene:create( event )
   chao9.x = display.contentCenterX+40
   chao9.y = display.contentCenterY-249
   chao9.rotation = 90
+--================================================================
+  proxima = display.newImageRect( "proxFase.png", 280, 5)
+  proxima.x = display.contentCenterX-20
+  proxima.y = display.contentCenterY-260
+  proxima.myName = "prox"
 
-  fundo = display.newImageRect("menu/fundo.png", 100, 70) --fundo das vidas
-  fundo.x = display.contentCenterX+100
-  fundo.y = display.contentCenterY-260
+  fundoVidas = display.newImageRect("menu/fundoVidas.png", 100, 70) --fundo das vidas
+  fundoVidas.x = display.contentCenterX+100
+  fundoVidas.y = display.contentCenterY-260
 
-  livesText = display.newText( "Vidas: " .. vidas, 55, 0, native.systemFont, 19 )
+  livesText = display.newText( vidas, 55, 0, native.systemFont, 19 )--vidas
   livesText:setFillColor( 0 )
   livesText.x = display.contentCenterX+100
   livesText.y = display.contentCenterY-268
+
+  fundoPontos = display.newImageRect("menu/fundoPontos.png", 100, 70) --fundo das vidas
+  fundoPontos.x = display.contentCenterX
+  fundoPontos.y = display.contentCenterY-260
+
+  pontosText = display.newText( pontos, 55, 0, native.systemFont, 19 )--pontos
+  pontosText:setFillColor( 0 )
+  pontosText.x = display.contentCenterX
+  pontosText.y = display.contentCenterY-268
 
   player = display.newSprite( sheet, sequenceSprite)
   player.x = display.contentCenterX-100
@@ -326,8 +352,7 @@ function scene:create( event )
   physics.addBody( chao8, "static",{bounce = 0})
   physics.addBody( chao9, "static" ,{bounce = 0})
 
-
-
+  physics.addBody( proxima, "kinematic", {bounce = 0} )
 end
 
 
@@ -371,10 +396,14 @@ function scene:destroy( event )
   display.remove(chao9)
   display.remove(parede)
   display.remove(parede2)
-  display.remove(fundo)
+  display.remove(fundoVidas)
   display.remove(livesText)
+  display.remove(fundoPontos)
+  display.remove(pontosText)
+
 
   timer.cancel(borrachas)
+  timer.cancel(lapis)
 
   print( "destroy" )
 

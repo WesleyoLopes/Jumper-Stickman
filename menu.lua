@@ -6,13 +6,14 @@ local menuSound
 
 local function iniciarJogo()
     audio.setVolume(0 , {chanel =1})
+    audio.stop(  )
 	composer.removeScene( "menu" )
 	composer.gotoScene("game", {time = 10} )
 end
 
-local function gameOver()
+local function goRanking()
     composer.removeScene("menu")
-    composer.gotoScene( "gameOver", {time = 100, effect = "zoomInOut"} )
+    composer.gotoScene( "ranking", {time = 100, effect = "zoomInOut"} )
 end
 
 local function exitGame()
@@ -39,9 +40,9 @@ function scene:create(event)
     jogar.x = display.contentCenterX-80
     jogar.y = display.contentCenterY-20
 
-    local fases = display.newImageRect( sceneGroup, "menu/MENUFASES.png", 130, 101 )
-    fases.x = display.contentCenterX +90
-    fases.y = display.contentCenterY -60
+    local ranking = display.newImageRect( sceneGroup, "menu/MENURANKING.png", 120, 84 )
+    ranking.x = display.contentCenterX +90
+    ranking.y = display.contentCenterY -60
 
     local creditos = display.newImageRect( sceneGroup, "menu/MENUCREDITOS.png", 115, 86)
     creditos.x = display.contentCenterX+80
@@ -53,7 +54,7 @@ function scene:create(event)
 
     jogar:addEventListener( "tap", iniciarJogo)
     sair:addEventListener("tap", exitGame)
-    fases:addEventListener( "tap", gameOver )
+    ranking:addEventListener( "tap", goRanking )
 
 --adicionando audio
     menuSound = audio.loadStream("audio/audioMenu.mp3")
@@ -92,6 +93,7 @@ end
 function scene:destroy( event )
 
     local sceneGroup = self.view
+
 end
 
 scene:addEventListener( "create", scene )
