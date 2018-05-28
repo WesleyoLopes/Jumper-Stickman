@@ -49,7 +49,8 @@ local function borracha()
   physics.addBody( borracha, "dynamic",{bounce = 0.5, filter={ groupIndex=-2 } } )
   borracha:setLinearVelocity(-40,0)
 end
-borrachas = timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
+
+borrachas = timer.performWithDelay( 4000, borracha, 0 ) --timer.cancel( )
 
 
 local function lapis()
@@ -60,7 +61,7 @@ local function lapis()
   physics.addBody( lapis, "dynamic",{bounce = 0.2, filter={ groupIndex=-2 } } )
   lapis:setLinearVelocity(40,0)
 end
-lapis = timer.performWithDelay( 5000, lapis, 0 ) --timer.cancel( )
+lapis = timer.performWithDelay( 6000, lapis, 0 ) --timer.cancel( )
 -----======================================================================================================================
 local function borracha2()
   local borracha2 = display.newImageRect("borracha.png", 15, 20 )
@@ -195,6 +196,7 @@ function gotoMenu()
 end
 
 function gotoGameOver()
+  composer.setVariable( "finalScore", pontos)
   print("gameOver")
   composer.removeScene("game")
   composer.gotoScene("gameOver", {time = 300, effect = "zoomInOut"})
@@ -496,6 +498,7 @@ function scene:destroy( event )
   timer.cancel( borrachas2 )
   timer.cancel(lapis)
   timer.cancel( lapis2 )
+
 
 
   print( "destroy" )

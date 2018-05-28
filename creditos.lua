@@ -43,24 +43,7 @@ function scene:create( event )
 
 	local sceneGroup = self.view
 
-
-	loadScores()
-
-	-- Insert the saved score from the last game into the table
-	table.insert( scoresTable, composer.getVariable( "finalScore" ) )
-	composer.setVariable( "finalScore", 0 )
-
-	-- Sort the table entries from highest to lowest
-	local function compare( a, b )
-		return a > b
-	end
-	table.sort( scoresTable, compare )
-
-	-- Save the scores
-	saveScores()
-
-
-	local background = display.newImageRect ( sceneGroup, "menu/RANKING.png", 330, 580 )
+	local background = display.newImageRect ( sceneGroup, "menu/CREDITOS.png", 330, 580 )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 	
@@ -69,33 +52,6 @@ function scene:create( event )
 	botaoMenu.y = display.contentCenterY+200
 
 	botaoMenu:addEventListener( "tap", gotoMenu )
-
-	--[[local rank1 = display.newText( sceneGroup, "1º - 50 pts ", display.contentCenterX+100, display.contentCenterY-90, native.systemFont, 36 )
-			rank1:setFillColor( 0, 0, 0)
-			rank1.anchorX = 1
-
-	--local rank2 = display.newText( sceneGroup, "2º - 45 pts ", display.contentCenterX+100, display.contentCenterY-30, native.systemFont, 36 )
-			rank2:setFillColor( 0, 0, 0)
-			rank2.anchorX = 1
-
-	--local rank3 = display.newText( sceneGroup, "3º - 10 pts ", display.contentCenterX+100, display.contentCenterY+30, native.systemFont, 36 )
-			rank3:setFillColor( 0, 0, 0)
-			rank3.anchorX = 1
-]]
-	for i = 1, 3 do
-
-		if ( scoresTable[i] ) then
-			local yPos = 100 + ( i * 56 )
-
-			local rankNum = display.newText( sceneGroup, i .. "º   -", display.contentCenterX+20, yPos, native.systemFont, 36 )
-			rankNum:setFillColor( 0, 0, 0)
-			rankNum.anchorX = 1
-
-			local thisScore = display.newText( sceneGroup, scoresTable[i], display.contentCenterX+50, yPos, native.systemFont, 36 )
-			thisScore.anchorX = 0
-			thisScore:setFillColor(0, 0, 0)
-		end
-	end
 	
 --    timer.performWithDelay(5000, gotoMenu)
 end
@@ -128,7 +84,7 @@ end
 function scene:destroy( event )
 
 	local sceneGroup = self.view
-	audio.stop( 1 )
+
 end
 
 scene:addEventListener( "create", scene )

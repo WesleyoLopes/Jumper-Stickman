@@ -5,8 +5,8 @@ local scene = composer.newScene( )
 local menuSound
 
 local function iniciarJogo()
-    audio.setVolume(0 , {chanel =1})
-    audio.stop(  )
+    --audio.setVolume(0 , {chanel =1})
+    --audio.stop(1)
 	composer.removeScene( "menu" )
 	composer.gotoScene("game", {time = 10} )
 end
@@ -14,6 +14,12 @@ end
 local function goRanking()
     composer.removeScene("menu")
     composer.gotoScene( "ranking", {time = 100, effect = "zoomInOut"} )
+end
+
+local function goCreditos()
+    composer.removeScene( "menu" )
+    composer.gotoScene( "creditos", {time = 100, effect = "zoomInOut"} )
+    -- body
 end
 
 local function exitGame()
@@ -55,13 +61,14 @@ function scene:create(event)
     jogar:addEventListener( "tap", iniciarJogo)
     sair:addEventListener("tap", exitGame)
     ranking:addEventListener( "tap", goRanking )
-
---adicionando audio
+    creditos:addEventListener( "tap", goCreditos )
+--[[adicionando audio
     menuSound = audio.loadStream("audio/audioMenu.mp3")
     audio.reserveChannels( 1 )
     audio.setVolume( 0.4 , {chanel = 1} )
     audio.play( menuSound, {chanel = 1, loops = -1})
 --fim audio
+]]
 end
 
 
@@ -75,7 +82,6 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         -- Start the music!
-        --audio.play( musicTrack, { channel=1, loops=-1 } )
     end
 end
 
@@ -86,12 +92,11 @@ function scene:hide( event )
     if ( phase == "will" ) then
 
     elseif ( phase == "did" ) then
---      audio.stop( 1 )
+  
     end
 end
 
 function scene:destroy( event )
-
     local sceneGroup = self.view
 
 end
