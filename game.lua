@@ -1,7 +1,7 @@
 local composer = require ("composer")
 local scene = composer.newScene( )
 
-local vidas = 99
+local vidas = 3
 local pontos = 0
 local player
 local livesText
@@ -21,6 +21,19 @@ local chao9
 
 local proxima
 local borrachas
+local borrachas2
+
+local died
+
+local singleJump, doubleJump = false, false
+
+local sheetOptions = {
+  width = 35,
+  height = 41,
+  numFrames = 56,
+  sheetContentWidth = 1960,
+  sheetContentHeigth = 41
+}
 
 --===============================================================
 local physics =  require ("physics")
@@ -33,10 +46,10 @@ local function borracha()
   borracha.x = display.contentCenterX-100
   borracha.y = display.contentCenterY-270
   borracha.myName = "borracha"
-  physics.addBody( borracha, "dynamic",{bounce = 0,5} )
+  physics.addBody( borracha, "dynamic",{bounce = 0.5, filter={ groupIndex=-2 } } )
   borracha:setLinearVelocity(-40,0)
 end
-borrachas = timer.performWithDelay( 9000, borracha, 0 ) --timer.cancel( )
+borrachas = timer.performWithDelay( 5000, borracha, 0 ) --timer.cancel( )
 
 
 local function lapis()
@@ -44,10 +57,45 @@ local function lapis()
   lapis.x = display.contentCenterX
   lapis.y = display.contentCenterY-200
   lapis.myName = "lapis"
-  physics.addBody( lapis, "dynamic",{bounce = 0.2} )
+  physics.addBody( lapis, "dynamic",{bounce = 0.2, filter={ groupIndex=-2 } } )
   lapis:setLinearVelocity(40,0)
 end
 lapis = timer.performWithDelay( 5000, lapis, 0 ) --timer.cancel( )
+-----======================================================================================================================
+local function borracha2()
+  local borracha2 = display.newImageRect("borracha.png", 15, 20 )
+  borracha2.x = display.contentCenterX
+  borracha2.y = display.contentCenterY
+  borracha2.myName = "borracha"
+  physics.addBody( borracha2, "dynamic",{bounce = 0.5, filter={ groupIndex=-2 } } )
+  borracha2:setLinearVelocity(-40,0)
+end
+borrachas2 = timer.performWithDelay( 5000, borracha2, 1 ) --timer.cancel( )
+
+
+local function lapis2()
+  local lapis2 = display.newImageRect("lapis.png", 30, 30 )
+  lapis2.x = display.contentCenterX
+  lapis2.y = display.contentCenterY
+  lapis2.myName = "lapis"
+  physics.addBody( lapis2, "dynamic",{bounce = 0.2, filter={ groupIndex=-2 } } )
+  lapis2:setLinearVelocity(40,0)
+end
+lapis2 = timer.performWithDelay( 5000, lapis2, 2 )
+--[[
+local function lapis()
+  local lapis = display.newImageRect("lapis.png", 30, 30 )
+  lapis.x = display.contentCenterX
+  lapis.y = display.contentCenterY-200
+  lapis.myName = "lapis"
+  physics.addBody( lapis, "dynamic",{bounce = 0.2, filter={ groupIndex=-2 } } )
+  lapis:setLinearVelocity(40,0)
+end
+lapis = timer.performWithDelay( 5000, lapis, 0 ) --timer.cancel( )
+]]
+--====================================================================================================================
+
+
 
 function removeButtons()
   display.remove( buttons[1] )
@@ -75,13 +123,6 @@ buttons[3].myName = "pular"
 
 
 
-local sheetOptions = {
-	width = 35,
-	height = 41,
-	numFrames = 56,
-	sheetContentWidth = 1960,
-	sheetContentHeigth = 41
-}
 
 local sheet = graphics.newImageSheet( "spriteCompleta.png", sheetOptions)
 
@@ -95,7 +136,7 @@ sequenceSprite = {
 	{name = "caindoEsquerda", frames = {36,37,38,39,39,39,39,40,40,41,41,42,42,43,43,44,44,45,45}, time = 1000, loopCount = 1},
 }
 
-local directJump
+local directJump = "direita"
 
 
 local function updateText()
@@ -105,37 +146,47 @@ end
 
 
 local function jump()
+   --[[ if event.phase == "ended" then
+    if doubleJump == false then 
+      player:setLinearVelocity( 0, 0 )
+      player:applyForce( 0, -2300, player.x, player.y )
+      player:setSequence("pulandoDireita")
+    end
+    if singleJump == false then singleJump = true 
+    else doubleJump = true end
+  end]]
+  player:applyForce( 0, -3, player.x, player.y )
   player:applyLinearImpulse( 0, -0.030, player.x, player.y )
+  print( "jump" )
   	if directJump == "direita" then
-  		player:setSequence("pulandoDireita")
-  		player:play( )
-	elseif directJump == "esquerda" then
+  	player:setSequence("pulandoDireita")
+  	player:play( )
+	  elseif directJump == "esquerda" then
 		player:setSequence( "pulandoEsquerda" )
 		player:play()
-	else
-		player:setSequence("pulandoDireita")
-		player:play()
 	end
-
 end
 
 
 local touchFunction = function(e)
+if (not died) then
 	if e.phase == "began" then
 		if e.target.myName == "direita" then
+      
 			player:setLinearVelocity (80,0)
 			player:setSequence("correndoDireita")
 			directJump = "direita"
 			player: play()
 		elseif e.target.myName == "esquerda" then
-			player:setLinearVelocity (-80,0)
+      player:setLinearVelocity (-80,0)
 			player:setSequence("correndoEsquerda")
 			directJump = "esquerda"
 			player: play()
 		elseif e.target.myName == "pular" then
 			jump()
-		end	
+		end	   
 	end
+end
 end
 
 function gotoMenu()
@@ -144,7 +195,7 @@ function gotoMenu()
 end
 
 function gotoGameOver()
-  print("entrou")
+  print("gameOver")
   composer.removeScene("game")
   composer.gotoScene("gameOver", {time = 300, effect = "zoomInOut"})
 end
@@ -156,7 +207,7 @@ end
 --====================================================================
 
 local function onCollision( event )
- 
+if (not died) then 
     if ( event.phase == "began" ) then
  
         local obj1 = event.object1
@@ -167,30 +218,33 @@ local function onCollision( event )
            	if (directJump == "direita") then
            	player:setSequence( "caindoEsquerda" )
             vidas = vidas-1
-            livesText.text = "Vidas: " .. vidas 
+            livesText.text = vidas 
 
            else
            	player:setSequence( "caindoDireita" )
            	vidas = vidas-1
-          	livesText.text = "Vidas: " .. vidas 
+          	livesText.text = vidas 
 
            	end
            	player:play( )
-
-        elseif
-            ( obj1.myName == "borracha" and obj2.myName == "player" ) then       	
+        
+            --=======erro====
+        elseif ( obj1.myName == "borracha" and obj2.myName == "player" ) then       	
+            
             if (directJump == "direita") then
            	player:setSequence( "caindoEsquerda" )
-           	player:play()
+          	player:play()
            	vidas = vidas-1
            	livesText.text = vidas 
            else
-           	player:setSequence( "caindoDireita" )
+          	player:setSequence( "caindoDireita" )
            	player:play()
            	vidas = vidas-1
            	livesText.text = vidas 
-           	end
+           end
+            ---======^^^^^^========
         if (vidas <= 0) then
+          died = true
           display.remove( player )
           display.remove( buttons[1] )
           display.remove( buttons[2] )
@@ -246,6 +300,7 @@ local function onCollision( event )
         end
 
     end
+end
 end
 
 local j
@@ -368,7 +423,7 @@ local function removeTuto()
   display.remove( tutorial[3] )
 end
 
-timer.performWithDelay( 5000, removeTuto )
+timer.performWithDelay( 3000, removeTuto )
 
   physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
@@ -392,6 +447,7 @@ function scene:show( event )
 
   local sceneGroup = self.view
   local phase = event.phase
+  died = false
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
@@ -432,10 +488,15 @@ function scene:destroy( event )
   display.remove(livesText)
   display.remove(fundoPontos)
   display.remove(pontosText)
-
-
+  display.remove(player)
+  display.remove(sequenceSprite)
+  vidas = 3
+  
   timer.cancel(borrachas)
+  timer.cancel( borrachas2 )
   timer.cancel(lapis)
+  timer.cancel( lapis2 )
+
 
   print( "destroy" )
 
