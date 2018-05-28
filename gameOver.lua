@@ -47,6 +47,7 @@ end
 function scene:destroy( event )
 
 	local sceneGroup = self.view
+	display.remove( pt )
 end
 
 scene:addEventListener( "create", scene )

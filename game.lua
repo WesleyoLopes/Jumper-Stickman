@@ -25,6 +25,8 @@ local borrachas2
 
 local tutorial
 
+local pt
+
 local died
 
 local singleJump, doubleJump = false, false
@@ -52,7 +54,7 @@ local function borracha()
   borracha:setLinearVelocity(-40,0)
 end
 
-borrachas = timer.performWithDelay( 4000, borracha, 0 ) --timer.cancel( )
+borrachas = timer.performWithDelay( 10000, borracha, 0 ) --timer.cancel( )
 
 
 local function lapis()
@@ -171,24 +173,23 @@ end
 
 
 local touchFunction = function(e)
-if (not died) then
-	if e.phase == "began" then
-		if e.target.myName == "direita" then
-      
-			player:setLinearVelocity (80,0)
-			player:setSequence("correndoDireita")
-			directJump = "direita"
-			player: play()
-		elseif e.target.myName == "esquerda" then
-      player:setLinearVelocity (-80,0)
-			player:setSequence("correndoEsquerda")
-			directJump = "esquerda"
-			player: play()
-		elseif e.target.myName == "pular" then
-			jump()
-		end	   
-	end
-end
+  if (not died) then
+  	if e.phase == "began" then
+  		if e.target.myName == "direita" then
+  			player:setLinearVelocity (80,0)
+  			player:setSequence("correndoDireita")
+  			directJump = "direita"
+  			player: play()
+  		elseif e.target.myName == "esquerda" then
+        player:setLinearVelocity (-80,0)
+  			player:setSequence("correndoEsquerda")
+  			directJump = "esquerda"
+  			player: play()
+  		elseif e.target.myName == "pular" then
+  			jump()
+  		end	   
+  	end
+  end
 end
 
 function gotoMenu()
@@ -253,7 +254,11 @@ if (not died) then
           display.remove( buttons[2] )
           display.remove( buttons[3] )
           
-          timer.performWithDelay(10, gotoGameOver)
+          pt = display.newText( pontos, display.contentCenterX+20, 100, native.systemFont, 36 )
+          pt:setFillColor( 0, 0, 0)
+          pt.anchorX = 1
+
+          timer.performWithDelay(1000, gotoGameOver)
       
 
         -- gameOver = display.newText( "GAME OVER " , 180, 200, native.systemFont, 40 )
@@ -483,11 +488,12 @@ function scene:destroy( event )
   display.remove(player)
   display.remove(sequenceSprite)
   vidas = 3
-  
+  died = true
   timer.cancel(borrachas)
   timer.cancel( borrachas2 )
   timer.cancel(lapis)
   timer.cancel( lapis2 )
+  display.remove( pt )
 
 
 
