@@ -23,6 +23,8 @@ local proxima
 local borrachas
 local borrachas2
 
+local tutorial
+
 local died
 
 local singleJump, doubleJump = false, false
@@ -156,7 +158,6 @@ local function jump()
     if singleJump == false then singleJump = true 
     else doubleJump = true end
   end]]
-  player:applyForce( 0, -3, player.x, player.y )
   player:applyLinearImpulse( 0, -0.030, player.x, player.y )
   print( "jump" )
   	if directJump == "direita" then
@@ -405,27 +406,16 @@ function scene:create( event )
   player.myName = "player"
 
 
+  tutorial = display.newImageRect("tutorial.png", 330, 580)
+  tutorial.x = display.contentCenterX
+  tutorial.y = display.contentCenterY
 
-local tutorial = {}
-tutorial[1] = display.newImage( "tutoDireita.png")
-tutorial[1].x = 265
-tutorial[1].y = 240
-
-tutorial[2] = display.newImage( "tutoEsquerda.png")
-tutorial[2].x = 55
-tutorial[2].y = 240
-
-tutorial[3] = display.newImage( "tutoJump.png")
-tutorial[3].x = 160
-tutorial[3].y = 240
 
 local function removeTuto()
-  display.remove( tutorial[1] )
-  display.remove( tutorial[2] )
-  display.remove( tutorial[3] )
+  display.remove( tutorial )
 end
 
-timer.performWithDelay( 3000, removeTuto )
+timer.performWithDelay( 5000, removeTuto )
 
   physics.addBody(player, "dynamic", {radius = 15, bounce = 0})
 
